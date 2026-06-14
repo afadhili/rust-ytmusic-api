@@ -86,7 +86,7 @@ impl MusicClient {
             .ok_or(ClientError::MissingConfig(key))
     }
 
-    async fn construct_request(&self, endpoint: &str, body: Value, query: HashMap<&str, String>) -> Result<Value, ClientError> {
+    async fn construct_request(&self, endpoint: &str, body: Value, query: HashMap<String, String>) -> Result<Value, ClientError> {
         if self.config.is_empty() {
             return Err(ClientError::NotInitialized);
         }
@@ -98,7 +98,7 @@ impl MusicClient {
 
         let mut params = form_urlencoded::Serializer::new(String::new());
         for (key, value) in query {
-            params.append_pair(key, &value);
+            params.append_pair(&key, &value);
         }
         params.append_pair("alt", "json");
         params.append_pair("key", &api_key);
@@ -304,7 +304,7 @@ impl MusicClient {
         let continuation = traverse_string(&songs_data, &["continuation"]);
         if !continuation.is_empty() {
             let mut q = HashMap::new();
-            q.insert("continuation", continuation);
+            q.insert("continuation".to_string(), continuation);
             let more = self.construct_request("browse", json!({}), q).await?;
             songs.extend(
                 traverse_list(&more, &["musicResponsiveListItemRenderer"])
@@ -348,7 +348,7 @@ impl MusicClient {
         let mut continuation = traverse_string(&playlist_data, &["continuation"]);
         while !continuation.is_empty() {
             let mut q = HashMap::new();
-            q.insert("continuation", continuation.clone());
+            q.insert("continuation".to_string(), continuation.clone());
             let songs_data = self.construct_request("browse", json!({}), q).await?;
             videos.extend(
                 traverse_list(&songs_data, &["musicResponsiveListItemRenderer"])
@@ -374,7 +374,7 @@ impl MusicClient {
         let mut continuation = traverse_string(&data, &["continuation"]);
         while !continuation.is_empty() {
             let mut q = HashMap::new();
-            q.insert("continuation", continuation.clone());
+            q.insert("continuation".to_string(), continuation.clone());
             let more = self.construct_request("browse", json!({}), q).await?;
             sections.extend(
                 traverse_list(&more, &["sectionListContinuation", "contents"])
