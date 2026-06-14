@@ -1,0 +1,13 @@
+/target/
+
+cargo-crash*.log
+
+.rs.bk
+/.idea/
+/.vscode/
+*.iml
+
+.env
+.env.*
+!.env.example
+
