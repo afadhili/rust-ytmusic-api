@@ -103,14 +103,23 @@ impl Parser {
 
     pub fn parse_home_section(data: &Value) -> HomeSection {
         let page_type = traverse_string(data, &["contents", "title", "browseEndpoint", "pageType"]);
-        let playlist_id = traverse_string(data, &["navigationEndpoint", "watchPlaylistEndpoint", "playlistId"]);
+        let playlist_id = traverse_string(
+            data,
+            &["navigationEndpoint", "watchPlaylistEndpoint", "playlistId"],
+        );
 
         let contents = traverse_list(data, &["contents"])
             .into_iter()
             .filter_map(|item| match PageType::from_str(&page_type) {
-                Some(PageType::MusicPageTypeAlbum) => Some(HomeContent::Album(AlbumParser::parse_home_section(item))),
-                Some(PageType::MusicPageTypePlaylist) => Some(HomeContent::Playlist(PlaylistParser::parse_home_section(item))),
-                _ if !playlist_id.is_empty() => Some(HomeContent::Playlist(PlaylistParser::parse_home_section(item))),
+                Some(PageType::MusicPageTypeAlbum) => {
+                    Some(HomeContent::Album(AlbumParser::parse_home_section(item)))
+                }
+                Some(PageType::MusicPageTypePlaylist) => Some(HomeContent::Playlist(
+                    PlaylistParser::parse_home_section(item),
+                )),
+                _ if !playlist_id.is_empty() => Some(HomeContent::Playlist(
+                    PlaylistParser::parse_home_section(item),
+                )),
                 _ => Some(HomeContent::Song(SongParser::parse_home_section(item))),
             })
             .collect();

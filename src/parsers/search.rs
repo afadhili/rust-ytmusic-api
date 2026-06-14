@@ -4,10 +4,7 @@ use crate::types::SearchResult;
 use crate::utils::traverse::{traverse_list, traverse_string};
 
 use super::{
-    album::AlbumParser,
-    artist::ArtistParser,
-    playlist::PlaylistParser,
-    song::SongParser,
+    album::AlbumParser, artist::ArtistParser, playlist::PlaylistParser, song::SongParser,
     video::VideoParser,
 };
 
@@ -20,9 +17,15 @@ impl SearchParser {
         match kind.as_str() {
             "Song" => Some(SearchResult::Song(SongParser::parse_search_result(item))),
             "Video" => Some(SearchResult::Video(VideoParser::parse_search_result(item))),
-            "Artist" => Some(SearchResult::Artist(ArtistParser::parse_search_result(item))),
-            "EP" | "Single" | "Album" => Some(SearchResult::Album(AlbumParser::parse_search_result(item))),
-            "Playlist" => Some(SearchResult::Playlist(PlaylistParser::parse_search_result(item))),
+            "Artist" => Some(SearchResult::Artist(ArtistParser::parse_search_result(
+                item,
+            ))),
+            "EP" | "Single" | "Album" => {
+                Some(SearchResult::Album(AlbumParser::parse_search_result(item)))
+            }
+            "Playlist" => Some(SearchResult::Playlist(PlaylistParser::parse_search_result(
+                item,
+            ))),
             _ => None,
         }
     }
@@ -44,7 +47,9 @@ impl SearchParser {
         // Structural fallback. This also makes search() useful when labels are localized.
         let page_type = traverse_string(item, &["pageType"]);
         match page_type.as_str() {
-            "MUSIC_PAGE_TYPE_ARTIST" | "MUSIC_PAGE_TYPE_USER_CHANNEL" => return Some("Artist".into()),
+            "MUSIC_PAGE_TYPE_ARTIST" | "MUSIC_PAGE_TYPE_USER_CHANNEL" => {
+                return Some("Artist".into())
+            }
             "MUSIC_PAGE_TYPE_ALBUM" => return Some("Album".into()),
             "MUSIC_PAGE_TYPE_PLAYLIST" => return Some("Playlist".into()),
             _ => {}

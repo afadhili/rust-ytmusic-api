@@ -1,8 +1,15 @@
 [package]
-name = "ytmusic-rs"
+name = "rs-ytmusic-api"
 version = "0.1.0"
+description = "A Rust client library for interacting with YouTube Music's internal API"
 edition = "2021"
 repository = "https://github.com/afadhili/rust-ytmusic-rs"
+license = "GPL-3.0"
+readme = "README.md"
+keywords = ["youtube", "music", "ytmusic", "api", "client"]
+categories = ["api-bindings", "multimedia::audio"]
+authors = ["afadhili"]
+exclude = ["target/", ".git/", ".github/", "examples/"]
 
 [dependencies]
 reqwest = { version = "0.12", default-features = false, features = [
